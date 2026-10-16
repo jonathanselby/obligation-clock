@@ -23,9 +23,10 @@ jobs:
           git fetch --tags --force
           if git rev-parse "$tag" >/dev/null 2>&1; then
             target=$(git rev-list -n 1 "$tag")
-            # One-time repair: the first v0.1.0 tag was created before CI exposed
-            # a Go 1.26 formatting failure. Only that known bad target may move.
-            if [ "$tag" = "v0.1.0" ] && [ "$target" = "fd39c2766981f16bf95820e1eca80eec1573b3ca" ]; then
+            # One-time v0.1.0 repair. The tag was created before the Go 1.26
+            # formatting gate was fully corrected. Only these known pre-release
+            # targets may move; once repaired, later pushes leave the tag alone.
+            if [ "$tag" = "v0.1.0" ] && { [ "$target" = "fd39c2766981f16bf95820e1eca80eec1573b3ca" ] || [ "$target" = "f342823fdec22713c1c5e1709d507849531c8118" ]; }; then
               git config user.name "github-actions[bot]"
               git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
               git tag -fa "$tag" -m "$tag"
