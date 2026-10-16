@@ -98,7 +98,11 @@ func TestInvalidCalendarAndContract(t *testing.T) {
 		func() Request { x := base; x.Calendar.Adjustment = "nearest"; return x }(),
 		func() Request { x := base; x.Calendar.Weekend = []string{"Funday"}; return x }(),
 		func() Request { x := base; x.Calendar.Weekend = []string{"Saturday", "Saturday"}; return x }(),
-		func() Request { x := base; x.Calendar.Weekend = []string{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}; return x }(),
+		func() Request {
+			x := base
+			x.Calendar.Weekend = []string{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}
+			return x
+		}(),
 		func() Request { x := base; x.Calendar.Holidays = []string{"2026-12-25", "2026-12-25"}; return x }(),
 		func() Request { x := base; x.Calendar.Holidays = []string{"25-12-2026"}; return x }(),
 	}
