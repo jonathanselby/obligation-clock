@@ -1,0 +1,36 @@
+OBLIGATION CLOCK V0.1
+
+REQUEST
+ trigger RFC3339 + named IANA timezone
+ duration / unit
+ weekend / holidays / adjustment
+ lifecycle label
+       |
+       v
+validate offset matches timezone
+validate weekend + holidays
+       |
+       v
++------------------------------+
+| calculate                    |
+| hours -> elapsed time        |
+| calendar_days -> local date  |
+| business_days -> local dates |
++------------------------------+
+       |
+       v
+reject nonexistent DST wall time
+       |
+       v
+optional next/previous business day
+       |
+       v
+RESULT
+ deadline / lifecycle / timezone / adjusted
+
+NO LEGAL APPLICABILITY
+NO HOLIDAY FEED
+NO PERSISTENCE
+NO NOTIFICATION
+
+Rule: Deadlines are data, not code.

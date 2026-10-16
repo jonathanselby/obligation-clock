@@ -4,9 +4,6 @@ on:
   push:
   pull_request:
 
-permissions:
-  contents: read
-
 jobs:
   go-test:
     runs-on: ubuntu-latest
@@ -15,10 +12,12 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: '1.26.x'
+      - name: Format contract
+        run: test -z "$(gofmt -l .)"
       - name: Vet
         run: go vet ./...
       - name: Unit tests with race detector
-        run: go test -race ./...
+        run: go test -race -count=1 ./...
       - name: Build
         run: go build -o ./bin/obligation-clock ./cmd/obligation-clock
       - name: Version contract
@@ -29,6 +28,10 @@ jobs:
         shell: bash
         run: |
           out=$(./bin/obligation-clock -input examples/bafflewick/request.json)
-          echo "$out" | grep -q '"deadline"'
-      - name: Boundary acceptance
-        run: go test ./internal/clock -run 'TestHours|TestCalendarDaysPreserveWallClockAcrossDST|TestBusinessDaysHoliday|TestAdjustment|TestLifecycleDoesNotChangeDeadline|TestInvalidConfigurationRejected' -count=1
+          echo "$out" | grep -q '"deadline":"2026-10-21T17:00:00+11:00"'
+          echo "$out" | grep -q '"lifecycle":"firm"'
+      - name: Calendar-boundary acceptance
+        run: >-
+          go test ./internal/clock
+          -run 'TestHours|TestHoursAreElapsedAcrossDST|TestCalendarDaysPreserveWallClockAcrossDST|TestCalendarDayRejectsDSTGap|TestBusinessDaysHoliday|TestCustomWeekend|TestAdjustment|TestPreviousBusinessDayAdjustment|TestLifecycleDoesNotChangeDeadline|TestInvalidCalendarAndContract|TestTriggerOffsetMustMatchTimezone'
+          -count=1
