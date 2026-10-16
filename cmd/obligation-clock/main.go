@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/jonathanselby/obligation-clock/internal/clock"
 	"os"
+
+	"github.com/jonathanselby/obligation-clock/internal/clock"
 )
 
 const version = "0.1.0"
