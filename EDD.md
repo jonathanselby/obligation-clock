@@ -15,6 +15,7 @@ A small deterministic deadline calculator for elapsed hours, calendar days and b
 3. Contradictory or impossible time data fails visibly.
 4. Elapsed time and calendar time are separate concepts.
 5. Provisional/firm is metadata, not arithmetic.
+6. Duration is bounded before arithmetic so extreme input cannot overflow hour multiplication or drive unbounded business-day iteration.
 
 ## 3. Runtime model
 
@@ -51,7 +52,9 @@ The supplied trigger offset must equal the named timezone's UTC offset at that i
 
 The trigger is then converted into the named location for local-calendar arithmetic.
 
-## 5. Elapsed-hour arithmetic
+## 5. Duration and elapsed-hour arithmetic
+
+`Calculate` accepts durations from zero through `MaxDuration` (100,000 units). The bound is checked before unit arithmetic.
 
 `hours` uses `time.Add(duration * time.Hour)`.
 
@@ -67,7 +70,7 @@ After adding the date, the implementation checks that hour, minute, second and n
 
 `business_days` repeatedly advances by one validated local calendar day and increments the count only when the resulting date is neither a configured weekend weekday nor configured holiday.
 
-This deliberately defines business-day counting in terms of whole local dates, not elapsed 24-hour periods.
+The common duration bound also caps this iterative path. This deliberately defines business-day counting in terms of whole local dates, not elapsed 24-hour periods.
 
 ## 8. Weekend calendar
 
@@ -143,7 +146,7 @@ Named tests cover:
 - custom weekend;
 - next/previous adjustment;
 - lifecycle invariance;
-- invalid calendar/contract inputs;
+- invalid calendar/contract inputs, including the duration ceiling;
 - trigger offset/timezone mismatch.
 
 CI adds format, vet, race tests, native build, exact version, Linux ARM64 build and executable Bafflewick acceptance.
@@ -171,6 +174,6 @@ CI adds format, vet, race tests, native build, exact version, Linux ARM64 build 
 | custom weekend | `TestCustomWeekend` |
 | next/previous adjustment | `TestAdjustment`, `TestPreviousBusinessDayAdjustment` |
 | lifecycle invariance | `TestLifecycleDoesNotChangeDeadline` |
-| invalid contract/calendar | `TestInvalidCalendarAndContract` |
+| invalid contract/calendar/duration | `TestInvalidCalendarAndContract` |
 | offset/timezone mismatch | `TestTriggerOffsetMustMatchTimezone` |
 | format/vet/race/build/version/ARM64/Bafflewick | `.github/workflows/test.yml` |

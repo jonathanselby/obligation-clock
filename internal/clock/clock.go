@@ -28,9 +28,14 @@ type Result struct {
 	Adjusted  bool   `json:"adjusted"`
 }
 
+const MaxDuration = 100_000
+
 func Calculate(r Request) (Result, error) {
 	if r.Duration < 0 {
 		return Result{}, errors.New("duration cannot be negative")
+	}
+	if r.Duration > MaxDuration {
+		return Result{}, fmt.Errorf("duration exceeds maximum of %d", MaxDuration)
 	}
 	if r.Lifecycle != "provisional" && r.Lifecycle != "firm" {
 		return Result{}, errors.New("lifecycle must be provisional or firm")

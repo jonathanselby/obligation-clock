@@ -91,6 +91,7 @@ func TestInvalidCalendarAndContract(t *testing.T) {
 	base := Request{Trigger: "2026-10-17T10:00:00+11:00", Duration: 1, Unit: "calendar_days", Calendar: Calendar{Timezone: "Australia/Sydney"}, Lifecycle: "firm"}
 	cases := []Request{
 		func() Request { x := base; x.Duration = -1; return x }(),
+		func() Request { x := base; x.Duration = MaxDuration + 1; return x }(),
 		func() Request { x := base; x.Lifecycle = "draft"; return x }(),
 		func() Request { x := base; x.Unit = "weeks"; return x }(),
 		func() Request { x := base; x.Calendar.Timezone = ""; return x }(),

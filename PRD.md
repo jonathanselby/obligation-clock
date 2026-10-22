@@ -22,6 +22,7 @@ Provide a deliberately small Go component that calculates a deadline from an exp
 - configurable weekend weekdays and holidays;
 - next/previous business-day adjustment;
 - provisional/firm lifecycle labels;
+- bounded duration input;
 - deterministic validation and structured result;
 - Go 1.26 and Linux ARM64 build proof.
 
@@ -53,7 +54,7 @@ Weekend names are valid Go weekday names, are unique, and cannot cover all seven
 `provisional` and `firm` are the only lifecycle values. Changing the lifecycle label cannot change the calculated deadline.
 
 ### FR8 — Visible failure
-Negative duration, invalid unit, lifecycle, timezone, trigger, offset mismatch, calendar entry or adjustment is rejected rather than silently coerced.
+Negative duration, duration above 100,000 units, invalid unit, lifecycle, timezone, trigger, offset mismatch, calendar entry or adjustment is rejected rather than silently coerced.
 
 ## 6. Acceptance criteria
 
@@ -67,7 +68,7 @@ Automated evidence must show:
 6. custom weekend weekdays work;
 7. next and previous business-day adjustment work;
 8. provisional and firm yield the same deadline;
-9. invalid unit/lifecycle/timezone/adjustment/weekend/holiday/duration are rejected;
+9. invalid unit/lifecycle/timezone/adjustment/weekend/holiday/duration, including over-limit duration, are rejected;
 10. duplicate weekend/holiday entries and seven-day weekends are rejected;
 11. trigger offset/timezone mismatch is rejected;
 12. format, vet, race, native build, exact version and Linux ARM64 build pass.
